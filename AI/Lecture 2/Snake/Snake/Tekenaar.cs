@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Snake
@@ -23,12 +24,13 @@ namespace Snake
         /*
          * Grid lines
          */
-        private static Pen _GridPen = new Pen(Color.ForestGreen, 1);
+        private static Pen _GridPen = new Pen(Color.Black, 1);
 
         /*
          * Path line
          */
         private static Pen _PathPen = new Pen(Color.Red, 4);
+        private static Pen _PathStartPen = new Pen(Color.Pink, 5);
 
         public static void DrawGrid(Graphics g, Dictionary<string, Vertex> dictionary)
         {
@@ -61,8 +63,11 @@ namespace Snake
                 int y1 = (coor[path[i]].Item2 * _OFFSET) + _OFFSET;
                 int x2 = (coor[path[i + 1]].Item1 * _OFFSET) + _OFFSET;
                 int y2 = (coor[path[i + 1]].Item2 * _OFFSET) + _OFFSET;
-
-                g.DrawLine(_PathPen, x1, y1, x2, y2);
+                if (i == 0)
+                    g.DrawLine(_PathStartPen, x1, y1, x2, y2);
+                else
+                    g.DrawLine(_PathPen, x1, y1, x2, y2);
+                Thread.Sleep(7);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace Snake
 {
     class Graph
     {
-        public List<string> result = new List<string>();
+        public List<string> result;
 
         public void AddEdge(string sourceName, string destName, double cost)
         {
@@ -36,6 +36,7 @@ namespace Snake
 
         public void Hamiltonian(string start)
         {
+            result = new List<string>();
             List<string> path = new List<string>();
             Hamiltonian(start, path);
         }
