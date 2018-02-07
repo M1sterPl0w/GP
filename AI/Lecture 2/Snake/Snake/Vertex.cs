@@ -10,10 +10,6 @@ namespace Snake
     {
         public string name;
         public List<Edge> adj;
-        public double dist;
-        public Vertex prev;
-        //public int pos; // GEEN IDEE
-        public int scratch; // Extra algortithm
         public List<Vertex> Path;
 
         public Vertex(string nm)
@@ -21,15 +17,6 @@ namespace Snake
             name = nm;
             adj = new List<Edge>();
             Path = new List<Vertex>();
-            Reset();
-        }
-
-        public void Reset()
-        {
-            dist = Graph.INFINITY;
-            prev = null;
-            Path = new List<Vertex>();
-            scratch = 0;
         }
     }
 }

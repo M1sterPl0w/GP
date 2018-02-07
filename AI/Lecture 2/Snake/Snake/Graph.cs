@@ -8,9 +8,7 @@ namespace Snake
 {
     class Graph
     {
-        public static double INFINITY = double.MaxValue;
-        public static int LENGTH = 24;
-        public List<Vertex> result = new List<Vertex>();
+        public List<string> result;
 
         public void AddEdge(string sourceName, string destName, double cost)
         {
@@ -36,39 +34,30 @@ namespace Snake
             return v;
         }
 
-        private void ClearAll()
+        public void Hamiltonian(string start)
         {
-            foreach(Vertex v in VertexMap.Values)
-            {
-                v.Reset();
-            }
+            result = new List<string>();
+            List<string> path = new List<string>();
+            Hamiltonian(start, path);
         }
 
-        public void Hamiltonian()
-        {
-            List<Vertex> path = new List<Vertex>();
-            path.Add(GetVertex("A"));
-            Hamiltonian("A", path);
-        }
-
-        private void Hamiltonian(string start, List<Vertex> path)
+        private void Hamiltonian(string start, List<string> path)
         {
             Vertex v = GetVertex(start);
-            List<Vertex> newPath = new List<Vertex>(path);
-            if (v.adj.Count == 0)
-            {
-                if (newPath.Count > result.Count)
-                    result = new List<Vertex>(newPath);
-                return;
-            }
-                
-
+            List<string> newPath = new List<string>(path);
+            newPath.Add(v.name);
+            bool noNextMoves = true;
             foreach(Edge ad in v.adj)
             {
-                if(newPath.Select(x => x).Where(x => x.name == ad.dest.name) == null)
+                if(newPath.Select(x => x).Where(x => x == ad.dest.name).FirstOrDefault() == null)
                 {
                     Hamiltonian(ad.dest.name, newPath);
+                    noNextMoves = false;
                 } 
+            }
+            if(noNextMoves && path.Count > result.Count)
+            {
+                this.result = new List<string>(newPath);
             }
         }
 
