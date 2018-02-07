@@ -1,6 +1,6 @@
-#include "Fraction.hpp"
 #include "stdafx.h"
 #include <iostream>
+#include "Fraction.hpp"
 using namespace std;
 
 Fraction::Fraction(int num, int den) {
@@ -28,7 +28,7 @@ void Fraction::simplify() {
 }
 
 void Fraction::print() {
-	//cout << "Numerator: " << numerator << " Denominator: " << denominator << endl;
+	cout << "Numerator: " << numerator << " Denominator: " << denominator << endl;
 }
 
 

@@ -2,7 +2,7 @@
 class Fraction 
 {
 public:
-	Fraction(int n, int d);
+	Fraction(int a, int b);
 	void simplify();
 	void print();
 private:
