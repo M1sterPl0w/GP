@@ -57,6 +57,7 @@
     </Compile>
     <Compile Include="Helper.cs" />
     <Compile Include="Maze.cs" />
+    <Compile Include="MazeSolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

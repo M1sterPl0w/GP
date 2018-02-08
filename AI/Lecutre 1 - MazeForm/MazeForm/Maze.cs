@@ -21,20 +21,9 @@ namespace MazeForm
             this.c = collumns;
             this.Walls = new List<Tuple<int, int>>();
             this.Set = new DisjointSets(CalculateNumberOfElements(rows, collumns));
-            Console.Clear();
-            Console.WriteLine("Calculating edges...");
             this.Edges = CalculateEdges(rows, collumns);
-            Console.Clear();
-            Console.WriteLine("Genering maze, progress: 0%");
             Helper.SetWalls(ref this.Walls, rows, collumns);
             GenerateMaze();
-        }
-
-        private void CalculateAndPrintProgress()
-        {
-            //Console.Clear();
-            float temp = Walls.Count / ((r * c) - (r + c));
-            Console.WriteLine("Progress: {0}%", (temp * 100));
         }
 
         private int CalculateNumberOfElements(int rows, int collumns)
@@ -85,17 +74,9 @@ namespace MazeForm
                 else
                 {
                     //this.Walls.Add(tempEdge);
-                    CalculateAndPrintProgress();
                 }
                     
             }
-
-            for (int i = 0; i < Edges.Count; i++)
-            {
-                this.Walls.Add(Edges[i]);
-                CalculateAndPrintProgress();
-            }
-            Console.WriteLine("Progress: 100%");
         }
     }
 }
