@@ -69,6 +69,19 @@ namespace MazeForm
             PrintEntranceAndExit(g, OFFSET, rows - 1, collumns - 1);
         }
 
+        public static void PrintSolution(Graphics g, int OFFSET, int col, int row, List<int> sol)
+        {
+            Pen p = new Pen(Color.Red, OFFSET);
+            foreach(int s in sol)
+            {
+                int x1 = (s % col) * OFFSET + (OFFSET / 2);
+                int y1 = (s / col) * OFFSET;
+                int x2 = (s % col) * OFFSET + (OFFSET / 2);
+                int y2 = ((s / col) * OFFSET) + OFFSET;
+                g.DrawLine(p, x1, y1, x2, y2);
+            }
+        }
+
         public static void PrintEntranceAndExit(Graphics g, int OFFSET, int rows, int collumns)
         {
             Pen p = new Pen(Color.White, 1);

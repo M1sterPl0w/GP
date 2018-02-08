@@ -14,8 +14,9 @@ namespace MazeForm
     {
         private int rows = 20;
         private int collumns = 30;
-        private const int OFFSET = 25;
+        private const int OFFSET = 5;
         private List<Tuple<int, int>> walls;
+        private List<int> sol;
         public Form1()
         {
             Console.WriteLine("How many rows?");
@@ -33,10 +34,9 @@ namespace MazeForm
             MazeSolver solver = new MazeSolver();
 
             solver.Solve(this.rows, this.collumns, this.walls);
-            Console.WriteLine("ROUTE");
-            foreach (int i in solver.Result)
-                Console.WriteLine(i);
-            Console.WriteLine("END");
+            sol = new List<int>(solver.Result);
+            foreach (var s in sol)
+                Console.WriteLine(s);
             InitializeComponent();
         }
 
@@ -44,8 +44,9 @@ namespace MazeForm
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-
+            Helper.PrintSolution(g, OFFSET, collumns, rows, sol);
             Helper.PrintMaze(g, rows, collumns, OFFSET, walls);
+            
         }
     }
 }

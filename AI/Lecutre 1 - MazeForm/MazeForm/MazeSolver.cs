@@ -60,7 +60,7 @@ namespace MazeForm
 
                     
             // Kan ik naar links?
-            if (elem / columns == (numberOfElem - 1) / columns)
+            if (elem / columns == (elem - 1) / columns)
                 if (!Walls.Any(x => (x.Item1 == elem || x.Item2 == elem) && (x.Item1 == elem - 1 || x.Item2 == elem - 1)))
                     if(elem - 1 > 0)
                         if(!newPath.Contains(elem - 1))
