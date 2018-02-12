@@ -14,7 +14,7 @@ namespace MazeForm
     {
         private int rows = 20;
         private int collumns = 30;
-        private const int OFFSET = 5;
+        private const int OFFSET = 3;
         private List<Tuple<int, int>> walls;
         private List<int> sol;
         public Form1()

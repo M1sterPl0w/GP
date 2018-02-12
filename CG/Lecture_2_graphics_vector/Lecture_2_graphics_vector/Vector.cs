@@ -11,8 +11,6 @@ namespace Lecture_2_graphics_vector
         public float X { get; set; }
         public float Y { get; set; }
 
-        public float array[,];
-
         public Vector(float x, float y)
         {
             this.X = x;

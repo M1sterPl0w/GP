@@ -17,6 +17,8 @@ namespace BridgeTorch
         private const int _Time = 30;
         public int AmountOfSolutions { get; set; }
 
+        public int counter = 0;
+
         public Puzzle()
         {
             Reset();
@@ -36,18 +38,19 @@ namespace BridgeTorch
             List<Tuple<int, int>> Moves = PossibleMovesToLeft(this.RightSide);
             Solve(new List<Tuple<int, int>>(), this.LeftSide, this.RightSide, true);
             Console.WriteLine("Time: {0}", t.ElapsedMilliseconds);
+            Console.WriteLine("Amount of iterations: {0}", counter);
         }
 
         public void Solve(List<Tuple<int, int>> Moves, List<int> left, List<int> right, bool direction)
         {
+            counter++;
             if(right.Count == 0)
             {
                 CheckAndPrint(Moves);
                 return;
             }
-
-            // Backtracking
-            if (AboveTime(Moves))
+            
+            if (AboveTime(Moves, right))
                 return;
 
             // Rechts naar Links
@@ -134,7 +137,7 @@ namespace BridgeTorch
             }
         }
 
-        private bool AboveTime(List<Tuple<int, int>> Moves)
+        private bool AboveTime(List<Tuple<int, int>> Moves, List<int> rightSide)
         {
             int totalTime = 0;
             foreach(Tuple<int, int> t in Moves)
@@ -144,6 +147,10 @@ namespace BridgeTorch
                 else
                     totalTime += t.Item2;
             }
+            //1232
+            foreach (int i in rightSide)
+                totalTime += (i / 2);
+            //2275
             return totalTime > _Time;
         }
     }

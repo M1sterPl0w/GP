@@ -60,6 +60,10 @@ namespace Lecture_2_graphics_vector
         }
         public static Matrix operator *(Matrix m1, Matrix m2)
         {
+            if(m1.array.GetLength(0) != m2.array.GetLength(1))
+            {
+                throw new Exception("Matrix sizes are not the same");
+            }
             Matrix newMatrix = new Matrix();
             for (int r = 0; r < 2; r++)
             {
@@ -76,23 +80,17 @@ namespace Lecture_2_graphics_vector
 
         public static Vector operator *(Matrix m1, Vector v)
         {
-            Matrix newMatrix = new Matrix(new Vector(0,0));
-            for (int r = 0; r < 2; r++)
-            {
-                for (int c = 0; c < 2; c++)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        newMatrix.array[r, c] += m1.array[r, i] * m2.array[i, c];
-                    }
-                }
-            }
-            return newMatrix;
+            Vector newVector = new Vector(0,0);
+            newVector.X += m1.array[0, 0] * v.X;
+            newVector.X += m1.array[0, 1] * v.Y;
+            newVector.Y += m1.array[1, 0] * v.X;
+            newVector.Y += m1.array[1, 1] * v.Y;
+            return newVector;
         }
 
         public static Matrix Identity()
         {
-            throw new NotImplementedException();
+            return new Matrix(1, 0, 0, 1);
         }
 
         public override string ToString()
