@@ -14,7 +14,7 @@ namespace BridgeTorch
         private List<int> RightSide { get; set; }
         // From right to left is true;
         // From left to right is false;
-        private const int _Time = 30;
+        private const int _Time = Int32.MaxValue;
         public int AmountOfSolutions { get; set; }
 
         public int counter = 0;
@@ -148,8 +148,8 @@ namespace BridgeTorch
                     totalTime += t.Item2;
             }
             //1232
-            foreach (int i in rightSide)
-                totalTime += (i / 2);
+            //foreach (int i in rightSide)
+            //    totalTime += (i / 2);
             //2275
             return totalTime > _Time;
         }
