@@ -149,14 +149,9 @@ namespace Lecture3
 
         public static Matrix Identity(int d)
         {
-            if(d == 2)
-                return new Matrix(1, 0, 0, 1);
-            return new Matrix(1, 0, 0, 0, 1, 0, 0, 0, 1);
-        }
-
-        public static Matrix Scale2D(float s)
-        {
-            return new Matrix(s, 0, 0, s);
+            return new Matrix(1, 0, 0, 
+                              0, 1, 0, 
+                              0, 0, 1);
         }
 
         public static Matrix Scale3D(float s)
@@ -166,59 +161,45 @@ namespace Lecture3
                               0, 0, s);
         }
 
-        public static Matrix Rotate2D(float degrees)
+        public static Matrix RotateX(float degrees)
         {
             double rad = (Math.PI / 180) * degrees;
-            return new Matrix((float)Math.Cos(rad), (float)-Math.Sin(rad),(float) Math.Sin(rad),(float) Math.Cos(rad));
-        }
-
-        public static Matrix Rotate3D(float degrees, char axis)
-        {
-            double rad = (Math.PI / 180) * degrees;
-            if(axis == 'x')
-            {
                 return new Matrix(1, 0, 0, 
                                   0, (float)Math.Cos(rad), (float)-Math.Sin(rad), 
                                   0f, (float)Math.Sin(rad), (float)Math.Cos(rad));
-            }
-            else if (axis == 'y')
-            {
-                return new Matrix((float)Math.Cos(rad), 0, (float)Math.Sin(rad),
+        }
+
+        public static Matrix RotateY(float degrees)
+        {
+            double rad = (Math.PI / 180) * degrees;
+            return new Matrix((float)Math.Cos(rad), 0, (float)Math.Sin(rad),
                                   0, 1, 0,
                                   (float)-Math.Sin(rad), 0, (float)Math.Cos(rad));
-            }
-            else if (axis == 'z')
-            {
-                return new Matrix((float)Math.Cos(rad), (float)-Math.Sin(rad), 0,
+        }
+
+        public static Matrix RotateZ(float degrees)
+        {
+            double rad = (Math.PI / 180) * degrees;
+            return new Matrix((float)Math.Cos(rad), (float)-Math.Sin(rad), 0,
                                   (float)Math.Sin(rad), (float)Math.Cos(rad), 0,
                                   0, 0, 1);
-            }
-            throw new Exception("Axis does not exist");
         }
+            
 
         public static Matrix Translate(Vector t)
         {
-            Matrix newMatrix = new Matrix();
+            return new Matrix()
+            {
+                array = new float[,] { { 1, 0, 0, t.x},
+                                        { 0, 1, 0, t.y},
+                                        { 0, 0, 1, t.z},
+                                        { 0, 0, 0, 1}}
+            };
+        }
 
-            if(t.z == 0)
-            {
-                return new Matrix()
-                {
-                    array = new float[,] {{ 1, 0, t.x },
-                                          { 0, 1, t.y },
-                                          { 0, 0, 1} }
-                };
-            }
-            else
-            {
-                return new Matrix()
-                {
-                    array = new float[,] { { 1, 0, 0, t.x},
-                                           { 0, 1, 0, t.y},
-                                           { 0, 0, 1, t.z},
-                                           { 0, 0, 0, 1}}
-                };
-            }
+        public static Vector ToVector(Matrix m)
+        {
+            return new Vector(m.array[0, 0], m.array[1, 0]);
         }
 
         public static Matrix Viewtransformation(float theta, float phi, float r)
@@ -231,14 +212,18 @@ namespace Lecture3
             return temp;
         }
 
-        //public static Vector ToVector()
-        //{
-
-        //}
-
-        public override string ToString()
+        public static Matrix ProjectionTransformation(float d, float z)
         {
-            throw new NotImplementedException();
+            float i = -(d / z);
+            return new Matrix()
+            {
+                array = new float[,]
+                {
+                    { i, 0 , 0 , 0 },
+                    { 0, i, 0, 0 }
+                }
+            };
         }
     }
 }
+

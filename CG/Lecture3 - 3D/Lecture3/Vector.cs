@@ -23,5 +23,12 @@
         {
             return $"({x},{y},{z})";
         }
+
+        public static Matrix ToMatrix(Vector v)
+        {
+            Matrix temp  = new Matrix();
+            temp.array = new float[,] { { v.x }, { v.y }, { v.z }, { v.w } };
+            return temp;
+        }
     }
 }

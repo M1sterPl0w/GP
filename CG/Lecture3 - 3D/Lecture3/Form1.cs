@@ -16,9 +16,7 @@ namespace Lecture3
         AxisX x_axis;
         AxisY y_axis;
         AxisZ z_axis;
-        Square s;
         Cube c;
-        bool check;
         public Form1()
         {
             InitializeComponent();
@@ -29,8 +27,6 @@ namespace Lecture3
             y_axis = new AxisY(200);
             z_axis = new AxisZ(200);
             c = new Cube(Color.Blue);
-            s = new Square(Color.Aqua);
-            check = true;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -46,27 +42,15 @@ namespace Lecture3
             vb = ViewPortTransformation(800, 600, 600, z_axis.vb);
             z_axis.Draw(e.Graphics, vb);
 
-            for (int i = 0; i < s.vb.Count; i++)
-                s.vb[i] = Matrix.Rotate2D(20) * s.vb[i];
-            vb = ViewPortTransformation(800, 600, 600, s.vb);
-
-            s.Draw(e.Graphics, vb);
-
             for (int i = 0; i < c.vertexbuffer.Count; i++)
+            {
                 c.vertexbuffer[i] = Matrix.Scale3D(150f) * c.vertexbuffer[i];
-
-            for (int i = 0; i < c.vertexbuffer.Count; i++)
-                c.vertexbuffer[i] = Matrix.Viewtransformation(45, 45, 50) * c.vertexbuffer[i];
-
-            for (int i = 0; i < c.vertexbuffer.Count; i++)
-                c.vertexbuffer[i] = Matrix.Rotate3D(30, 'z') * c.vertexbuffer[i];
-
-            
-
+                c.vertexbuffer[i] = Matrix.RotateZ(30) * c.vertexbuffer[i];
+                c.vertexbuffer[i] = Matrix.Viewtransformation(100, -10, 10) * c.vertexbuffer[i];
+                c.vertexbuffer[i] = Matrix.ToVector(Matrix.ProjectionTransformation(800, 800) * (Vector.ToMatrix(c.vertexbuffer[i])));
+            }
             vb = ViewPortTransformation(800, 600, 600, c.vertexbuffer);
             c.Draw(e.Graphics, vb);
-
-            Thread.Sleep(1000);
         }
 
         public static List<Vector> ViewPortTransformation(float width, float height, float depth, List<Vector> vb)
@@ -91,17 +75,6 @@ namespace Lecture3
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private void TranslateToCameraPosition()
-        {
-
-        }
-
-        private void Form1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Click");
-            Invalidate();
         }
     }
 }
