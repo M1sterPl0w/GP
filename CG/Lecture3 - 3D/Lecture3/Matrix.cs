@@ -17,30 +17,12 @@ namespace Lecture3
             this.array = new float[dimension0, dimension1];
         }
 
-        public Matrix(float m11, float m21)
-        {
-            this.array = new float[,] { { m11 }, { m21 }, { 1 } };
-        }
-
-        public Matrix(float m11, float m12,
-                      float m21, float m22)
-        {
-            this.array = new float[,] {{ m11, m12, 0 }, { m21, m22, 0 }, { 0, 0, 1} };
-        }
 
         public Matrix(float m11, float m12, float m13,
                       float m21, float m22, float m23,
                       float m31, float m32, float m33)
         {
             this.array = new float[,] { { m11, m12, m13, 0 }, { m21, m22, m23, 0 }, { m31, m32, m33, 0 }, { 0, 0, 0, 1 } };
-        }
-
-        public Matrix(Vector v)
-        {
-            if (v.z == 0)
-                this.array = new float[,] { { v.x }, { v.y }, { v.w } };
-            else
-                this.array = new float[,] { { v.x }, { v.y }, { v.z }, { v.w } };
         }
 
         public static Matrix operator +(Matrix m1, Matrix m2)
@@ -118,33 +100,8 @@ namespace Lecture3
 
         public static Vector operator *(Matrix m1, Vector v)
         {
-            Vector newVector = new Vector();
-            if(m1.array.GetLength(1) == 3)
-            {
-                newVector.x += m1.array[0, 0] * v.x;
-                newVector.x += m1.array[0, 1] * v.y;
-                newVector.x += m1.array[0, 2] * v.w;
-                newVector.y += m1.array[1, 0] * v.x;
-                newVector.y += m1.array[1, 1] * v.y;
-                newVector.y += m1.array[1, 2] * v.w;
-            }
-            else if(m1.array.GetLength(1) == 4)
-            {
-                newVector.x += m1.array[0, 0] * v.x;
-                newVector.x += m1.array[0, 1] * v.y;
-                newVector.x += m1.array[0, 2] * v.z;
-                newVector.x += m1.array[0, 3] * v.w;
-                newVector.y += m1.array[1, 0] * v.x;
-                newVector.y += m1.array[1, 1] * v.y;
-                newVector.y += m1.array[1, 2] * v.z;
-                newVector.y += m1.array[1, 3] * v.w;
-                newVector.z += m1.array[2, 0] * v.x;
-                newVector.z += m1.array[2, 1] * v.y;
-                newVector.z += m1.array[2, 2] * v.z;
-                newVector.z += m1.array[2, 3] * v.w;
-            }
-            
-            return newVector;
+            Matrix vector = Vector.ToMatrix(v);
+            return Matrix.ToVector(m1 * vector);
         }
 
         public static Matrix Identity(int d)
@@ -199,7 +156,11 @@ namespace Lecture3
 
         public static Vector ToVector(Matrix m)
         {
-            return new Vector(m.array[0, 0], m.array[1, 0]);
+            Vector tmp = new Vector();
+            for (int i = 0; i < m.array.GetLength(0); i++)
+                tmp[i] = m.array[i, 0];
+
+            return tmp;
         }
 
         public static Matrix Viewtransformation(float theta, float phi, float r)
