@@ -165,9 +165,12 @@ namespace Lecture3
 
         public static Matrix Viewtransformation(float theta, float phi, float r)
         {
-            Matrix temp = new Matrix((float)-Math.Sin(theta), (float)Math.Cos(theta), 0,
-                              (float)-Math.Cos(theta) * (float)Math.Cos(phi), (float)-Math.Cos(phi) * (float)Math.Sin(theta), (float)Math.Sin(phi),
-                              (float)Math.Cos(theta) * (float)Math.Sin(phi), (float)Math.Sin(theta) * (float)Math.Sin(phi), (float)Math.Cos(phi));
+            double thetaRad = (Math.PI / 180) * theta;
+            double phiRad = (Math.PI / 180) * phi;
+
+            Matrix temp = new Matrix(-(float)Math.Sin(thetaRad), (float)Math.Cos(thetaRad), 0,
+                              -(float)Math.Cos(thetaRad) * (float)Math.Cos(phiRad), -(float)Math.Cos(phiRad) * (float)Math.Sin(thetaRad), (float)Math.Sin(phiRad),
+                              (float)Math.Cos(thetaRad) * (float)Math.Sin(phiRad), (float)Math.Sin(thetaRad) * (float)Math.Sin(phiRad), (float)Math.Cos(phiRad));
             temp.array[2, 3] = -r;
 
             return temp;

@@ -24,7 +24,7 @@ namespace Lecture3
 
         public void Draw(Graphics g, List<Vector> vb)
         {
-            Pen pen = new Pen(Color.Green, 2f);
+            Pen pen = new Pen(Color.Blue, 2f);
             g.DrawLine(pen, vb[0].x, vb[0].y, vb[1].x, vb[1].y);
             Font font = new Font("Arial", 10);
             PointF p = new PointF(vb[1].x, vb[1].y);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,16 +18,27 @@ namespace Lecture3
         AxisY y_axis;
         AxisZ z_axis;
         Cube c;
+
+        int phase;
+        System.Timers.Timer s;
+
+        bool xRotationForward = true;
+        float xRotation = 0;
+        bool yRotationForward = true;
+        float yRotation = 0;
+        float zRotation = 0;
+        
         public Form1()
         {
             InitializeComponent();
             this.Width = 800;
             this.Height = 600;
 
-            x_axis = new AxisX(200);
-            y_axis = new AxisY(200);
-            z_axis = new AxisZ(200);
-            c = new Cube(Color.Blue);
+            x_axis = new AxisX(2);
+            y_axis = new AxisY(2);
+            z_axis = new AxisZ(2);
+            c = new Cube(Color.Black);
+            phase = 0;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -34,39 +46,23 @@ namespace Lecture3
             List<Vector> vb;
             base.OnPaint(e);
 
+            Start(e.Graphics);
 
-            vb = ViewPortTransformation(800, 600, 600, x_axis.vb);
-            x_axis.Draw(e.Graphics, vb);
-            vb = ViewPortTransformation(800, 600, 600, y_axis.vb);
-            y_axis.Draw(e.Graphics, vb);
-            vb = ViewPortTransformation(800, 600, 600, z_axis.vb);
-            z_axis.Draw(e.Graphics, vb);
+            this.PhiLabel.Text = Transformations.phi.ToString();
+            this.ThetaLabel.Text = Transformations.theta.ToString();
+            this.ScaleLabel.Text = c.vertexbuffer[0].x.ToString();
+            this.RotateXLabel.Text = xRotation.ToString();
+            this.RotateYLabel.Text = yRotation.ToString();
+            this.RotateZLabel.Text = zRotation.ToString();
+            this.RLabel.Text = Transformations.r.ToString();
+            this.DLabel.Text = Transformations.d.ToString();
 
-            for (int i = 0; i < c.vertexbuffer.Count; i++)
-            {
-                c.vertexbuffer[i] = Matrix.Scale3D(150f) * c.vertexbuffer[i];
-                c.vertexbuffer[i] = Matrix.RotateZ(30) * c.vertexbuffer[i];
-                c.vertexbuffer[i] = Matrix.Viewtransformation(100, -10, 10) * c.vertexbuffer[i];
-                c.vertexbuffer[i] = Matrix.ToVector(Matrix.ProjectionTransformation(800, 800) * (Vector.ToMatrix(c.vertexbuffer[i])));
-            }
-            vb = ViewPortTransformation(800, 600, 600, c.vertexbuffer);
+            vb = Transformations.ViewTransformation(c.vertexbuffer);
+            vb = Transformations.ProjectionTransformation(vb);
+            vb = Transformations.ViewPortTransformation(800, 600, vb);
             c.Draw(e.Graphics, vb);
         }
-
-        public static List<Vector> ViewPortTransformation(float width, float height, float depth, List<Vector> vb)
-        {
-            List<Vector> result = new List<Vector>();
-            float cx = width / 2;
-            float cy = height / 2;
-            float cz = depth / 2;
-            foreach(Vector v in vb)
-            {
-                Vector v2 = new Vector(v.x + cx, cy - v.y, cz - v.z);
-                result.Add(v2);
-            }
-            return result;
-        }
-
+        
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
@@ -75,6 +71,215 @@ namespace Lecture3
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void Start(Graphics g)
+        {
+            List<Vector> vb;
+            vb = Transformations.ViewTransformation(x_axis.vb);
+            vb = Transformations.ProjectionTransformation(vb);
+            vb = Transformations.ViewPortTransformation(800, 600, vb);
+            x_axis.Draw(g, vb);
+
+            vb = Transformations.ViewTransformation(y_axis.vb);
+            vb = Transformations.ProjectionTransformation(vb);
+            vb = Transformations.ViewPortTransformation(800, 600, vb);
+            y_axis.Draw(g, vb);
+                
+            vb = Transformations.ViewTransformation(z_axis.vb);
+            vb = Transformations.ProjectionTransformation(vb);
+            vb = Transformations.ViewPortTransformation(800, 600, vb);
+            z_axis.Draw(g, vb);
+        }
+
+        private void ModelTrans(Func<float, Matrix> func, float degrees)
+        {
+            c.vertexbuffer = c.vertexbuffer.Select(i => func(degrees) * i).ToList();
+        }
+
+        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            switch (e.KeyChar)
+            {
+                case 'x':
+                    ModelTrans(Matrix.RotateX, 1);
+                    xRotation++;
+                    break;
+                case 'X':
+                    ModelTrans(Matrix.RotateX, -1);
+                    xRotation--;
+                    break;
+                case 'y':
+                    ModelTrans(Matrix.RotateY, 1);
+                    yRotation++;
+                    break;
+                case 'Y':
+                    ModelTrans(Matrix.RotateY, -1);
+                    yRotation--;
+                    break;
+                case 'z':
+                    ModelTrans(Matrix.RotateZ, 1);
+                    zRotation++;
+                    break;
+                case 'Z':
+                    ModelTrans(Matrix.RotateZ, -1);
+                    zRotation--;
+                    break;
+                case 's':
+                    ModelTrans(Matrix.Scale3D, 1.1f);
+                    break;
+                case 'S':
+                    ModelTrans(Matrix.Scale3D, 0.9f);
+                    break;
+                case 'c':
+                    Reset();
+                    break;
+                case 'a':
+                    StartAnimation();
+                    break;
+                case 'A':
+                    StopAnimation();
+                    break;
+            }
+            Invalidate();
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch(e.KeyValue)
+            {
+                // PgUp
+                case 33:
+                    Translate(new Vector(0, 0, 0.1f));
+                    break;
+                // PgDown
+                case 34:
+                    Translate(new Vector(0, 0, -0.1f));
+                    break;
+                // Left
+                case 37:
+                    Translate(new Vector(-0.1f, 0, 0));
+                    break;
+                // Up
+                case 38:
+                    Translate(new Vector(0, 0.1f, 0));
+                    break;
+                // Right
+                case 39:
+                    Translate(new Vector(0.1f, 0, 0));
+                    break;
+                // Down
+                case 40:
+                    Translate(new Vector(0, -0.1f, 0));
+                    break;
+            }
+            Invalidate();
+        }
+
+        private void Translate(Vector v)
+        {
+            c.vertexbuffer = c.vertexbuffer.Select(i => Matrix.Translate(v) * i).ToList();
+        }
+
+        private void Reset()
+        {
+            c = new Cube(Color.Black);
+            x_axis = new AxisX(2);
+            y_axis = new AxisY(2);
+            z_axis = new AxisZ(2);
+            Transformations.phi = -10;
+            Transformations.theta = -100;
+            xRotation = 0;
+            yRotation = 0;
+            zRotation = 0;
+        }
+
+        private void StartAnimation()
+        {
+            if (phase == 0)
+            {
+                s = new System.Timers.Timer();
+                s.Start();
+                phase = 1;
+                s.Interval = 50;
+                s.Elapsed += Animation;
+            }
+        }
+
+        private void StopAnimation()
+        {
+            if(phase != 0)
+            {
+                phase = 0;
+                Reset();
+            }
+        }
+        private void Animation(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            // Phase 1
+            if (phase == 1)
+            {
+                ModelTrans(Matrix.Scale3D, 1.01f);
+                Invalidate();
+                Transformations.theta--;
+                if (c.vertexbuffer[0].x / 1.5 >= 1)
+                    phase = 2;
+            }
+
+            // Phase 2
+            else if (phase == 2)
+            {
+                Transformations.theta--;
+                if (xRotationForward)
+                {
+                    ModelTrans(Matrix.RotateX, 1);
+                    xRotation++;
+                    if (xRotation == 45)
+                        xRotationForward = false;
+                }
+                else
+                {
+                    ModelTrans(Matrix.RotateX, -1);
+                    if(xRotation == 1)
+                        phase = 3;
+                    xRotation--;
+                }
+                Invalidate();
+            }
+
+            // Phase 3
+            else if(phase == 3)
+            {
+                
+                Transformations.phi++;
+                if (yRotationForward)
+                {
+                    ModelTrans(Matrix.RotateY, 1);
+                    yRotation++;
+                    if (yRotation == 45)
+                        yRotationForward = false;
+                }
+                else
+                {
+                    ModelTrans(Matrix.RotateY, -1);
+                    if (yRotation == 1)
+                        phase = 4;
+                    yRotation--;
+                }
+                Invalidate();
+            }
+
+            // Phase 4 (restore phi and theta)
+            else if(phase == 4)
+            {
+                if (Transformations.theta != -100)
+                    Transformations.theta++;
+                if (Transformations.phi != -10)
+                    Transformations.phi--;
+                if (Transformations.theta == -100 && Transformations.phi == -10)
+                    phase = 1;
+                Invalidate();
+            }
         }
     }
 }
